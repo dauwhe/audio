@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<link rel="manifest" href="publication.json">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#4285f4">
+	<style type="text/css">
+	h1 { 
+	  font-size: 1.5em;
+	  font-weight: normal;
+	  text-transform: lowercase;
+	  font-variant: small-caps;
+	  letter-spacing: 2pt;
+	  width: 500px;
+	  }
+	audio { 
+	display: block;
+	width: 500px;
+	 }
+
+	play-list {
+	text-align: center;
+	}
+	
+	play-list span {
+	display: block;
+	width: 500px;
+	margin-top: 5px;
+	}
+	</style>
+	
+		<script>
+	if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+	</script>
+	
+	
+	
+	
+</head>
+<body>
+
+
+<play-list manifest="publication.json"></play-list>
+<script>
+function getManifest(url) {
+  return fetch(url)
+    .then(response => response.text())
+    .then(result => JSON.parse(result))
+};
+
+class PlayListElement extends HTMLElement {
+  constructor() {
+    // Always call super first in constructor
+    super();
+  }
+  
+  connectedCallback() {
+  
+// identify the pub manifest
+var manifestLink = this.getAttribute('manifest');
+
+// fetch the manifest
+getManifest(manifestLink)
+.then(manifestContent => {
+
+// get the reading order from the manifest
+var reading_order = manifestContent.readingOrder;
+var bookTitle = manifestContent.name;
+var playlistElement = this;
+
+  // add an element to hold the title of the audiobook  
+  var bookTitleElement = document.createElement('h1');
+  bookTitleElement.innerHTML = bookTitle;
+  playlistElement.appendChild(bookTitleElement);
+  
+// create an audio element and set its attributes
+
+var audioElement = document.createElement('audio');
+  audioElement.setAttribute('src', reading_order[0].url);
+  audioElement.setAttribute('controls', '');
+  audioElement.setAttribute('id', 'audio-child');
+  audioElement.setAttribute('preload', '');
+  audioElement.setAttribute('title', reading_order[0].name);
+  playlistElement.appendChild(audioElement);
+  
+// add a span to hold the name of the audiofile  
+  var trackNameWrapper = document.createElement('span');
+  trackNameWrapper.innerHTML = reading_order[0].name;
+  playlistElement.appendChild(trackNameWrapper);
+
+// add event listener for when playback ends, which starts playing the next audio file
+  audioElement.addEventListener('ended', function(){ 
+  var currentAudioPosition = reading_order.findIndex(i => i.url === audioElement.getAttribute('src'));
+  audioElement.setAttribute('src', reading_order[currentAudioPosition + 1].url);
+  audioElement.setAttribute('title', reading_order[currentAudioPosition + 1].name);
+  trackNameWrapper.innerHTML = reading_order[currentAudioPosition + 1].name;
+  audioElement.play(); 
+  },false);
+}
+)
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length)
+          console.info('Node added: ', mutation.addedNodes[0])
+      })
+    })
+    observer.observe(this, { childList: true })
+  }
+  };
+
+customElements.define('play-list', PlayListElement);
+</script>
+</body>
+</html>
