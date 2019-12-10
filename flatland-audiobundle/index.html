@@ -17,7 +17,6 @@
 	  }
 	audio { 
 	display: block;
-	width: 500px;
 	 }
 
 	play-list {
@@ -26,9 +25,81 @@
 	
 	play-list span {
 	display: block;
-	width: 500px;
+
 	margin-top: 5px;
 	}
+	
+	
+		/**
+ * Tabs
+ */
+.tabs {
+	display: flex;
+	flex-wrap: wrap; // make sure it wraps
+}
+.tabs label {
+	order: 1; // Put the labels first
+	display: block;
+	padding: 1rem 2rem;
+	margin-right: 0.2rem;
+	cursor: pointer;
+  background: #90CAF9;
+  font-weight: bold;
+  transition: background ease 0.2s;
+}
+.tabs .tab {
+  order: 99; // Put the tabs last
+  flex-grow: 1;
+	width: 100%;
+	display: none;
+  padding: 1rem;
+  background: #fff;
+}
+.tabs input[type="radio"] {
+	display: none;
+}
+.tabs input[type="radio"]:checked + label {
+	background: #fff;
+}
+.tabs input[type="radio"]:checked + label + .tab {
+	display: block;
+}
+
+@media (max-width: 45em) {
+  .tabs .tab,
+  .tabs label {
+    order: initial;
+  }
+  .tabs label {
+    width: 100%;
+    margin-right: 0;
+    margin-top: 0.2rem;
+  }
+}
+
+
+body {
+  background: #eee;
+  min-height: 100vh;
+	box-sizing: border-box;
+	padding-top: 10vh;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
+  line-height: 1.5;
+  max-width: 60rem;
+  margin: 0 auto;
+  font-size: 112%;
+}
+
+div > p {
+text-align: left;
+}
+
+nav ol, nav li {
+text-align: left;
+}
+
+
 	</style>
 	
 		<script>
@@ -51,76 +122,294 @@
 </head>
 <body>
 
+<label for="book-select">Choose an audiobook:</label>
 
-<play-list manifest="publication.json"></play-list>
+<select name="books" id="book-select" onchange="doStuff()">
+    <option value="foo">Choose an audiobook</option>
+
+    <option value="librivox-133-manifest.json">Flatland</option>
+    <option value="librivox-753-manifest.json">Moby-Dick</option>
+</select>
+
+
+
+<play-list id="foo"></play-list>
+
+
+
+
+
+
+
+
 <script>
+
+
+var input = document.getElementById('book-select');
+var customElement = document.getElementById('foo');
+input.onchange = chooseBook;
+
+function chooseBook(e) {
+customElement.setAttribute('manifest', e.target.value);
+}
+
+
+
+
 function getManifest(url) {
   return fetch(url)
     .then(response => response.text())
     .then(result => JSON.parse(result))
 };
 
+function getXml(url) {
+  return fetch(url)
+    .then(response => response.text())
+  //  .then(result => (new window.DOMParser()).parseFromString(result, "text/xml"));
+};
+
 class PlayListElement extends HTMLElement {
   constructor() {
     // Always call super first in constructor
     super();
+  
+var playlistElement = this;
+
+// create an audio element and set its attributes
+
+var audioElement = document.createElement('audio');
+//  audioElement.setAttribute('src', reading_order[0].url);
+  audioElement.setAttribute('controls', '');
+  audioElement.setAttribute('id', 'audio-child');
+  audioElement.setAttribute('preload', '');
+//  audioElement.setAttribute('title', reading_order[0].name);
+  playlistElement.appendChild(audioElement);
+  
+  
+    // add an element to hold the title of the audiobook  
+  var bookTitleElement = document.createElement('h1');
+  bookTitleElement.setAttribute('id', 'booktitleelement');
+  playlistElement.appendChild(bookTitleElement);
+  
+    var trackNameWrapper = document.createElement('span');
+      trackNameWrapper.setAttribute('id', 'tracknamewrapper');
+
+      playlistElement.appendChild(trackNameWrapper);
+  
+  // this takes the value of select element (which is the manifest) and uses it to
+  // set the attribute on the playlist element. 
+
+var userChoice = document.getElementById("book-select");
+var manifestLink = userChoice.options[userChoice.selectedIndex].value;
+playlistElement.setAttribute('manifest', manifestLink);
+
+var tabContainer = document.createElement('div');
+  tabContainer.setAttribute('class', 'tabs');
+  var input1 = document.createElement('input');
+  input1.setAttribute('type', 'radio');
+  input1.setAttribute('name', 'tabs');
+  input1.setAttribute('id', 'tabone');
+  input1.setAttribute('checked', 'checked');
+  
+  var input2 = document.createElement('input');
+  input2.setAttribute('type', 'radio');
+  input2.setAttribute('name', 'tabs');
+  input2.setAttribute('id', 'tabtwo');
+  input2.setAttribute('checked', 'checked');
+  var label1 = document.createElement('label');
+  label1.setAttribute('for', 'tabone');
+  label1.innerHTML = 'Contents'
+  var label2 = document.createElement('label');
+  label2.setAttribute('for', 'tabtwo');
+  label2.innerHTML = 'Metadata'
+  var tocDiv = document.createElement('div');
+  tocDiv.setAttribute('class', 'tab');
+  tocDiv.setAttribute('id', 'tocdiv');
+  
+  var metadataDiv = document.createElement('div');
+  metadataDiv.setAttribute('class', 'tab');
+  var publisherDiv = document.createElement('p');
+  
+  metadataDiv.appendChild(publisherDiv);
+  
+    var authorDiv = document.createElement('p');
+
+  metadataDiv.appendChild(authorDiv);
+  
+      var readByDiv = document.createElement('p');
+
+  metadataDiv.appendChild(readByDiv);
+  
+  tabContainer.appendChild(input1);
+  tabContainer.appendChild(label1);
+  tabContainer.appendChild(tocDiv);
+    tabContainer.appendChild(input2);
+  tabContainer.appendChild(label2);
+  tabContainer.appendChild(metadataDiv);
+    playlistElement.appendChild(tabContainer);
+   
+    
   }
   
-  connectedCallback() {
+   static get observedAttributes() {
+    return ['manifest'];
+  } // end constructor
   
-// identify the pub manifest
-var manifestLink = this.getAttribute('manifest');
+  connectedCallback() {
+//  updateRendering();
+  
+  }
 
-// fetch the manifest
+
+  
+  // ok. if the user changes the select option, we need to load the new book
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log('hello');
+    
+    updateRendering();
+  }
+  
+  
+  
+  };
+
+
+ try {
+customElements.define('play-list', PlayListElement);
+}
+catch(g){
+console.log('oh shit');
+}
+
+
+function updateRendering() {
+
+
+var manifestLink = customElement.getAttribute('manifest');
+
+console.log(manifestLink);
+
 getManifest(manifestLink)
 .then(manifestContent => {
 
 // get the reading order from the manifest
 var reading_order = manifestContent.readingOrder;
 var bookTitle = manifestContent.name;
-var playlistElement = this;
+var author = manifestContent.author;
+var readBy = manifestContent.readBy;
+var publisher = manifestContent.publisher;
 
-  // add an element to hold the title of the audiobook  
-  var bookTitleElement = document.createElement('h1');
-  bookTitleElement.innerHTML = bookTitle;
-  playlistElement.appendChild(bookTitleElement);
-  
-// create an audio element and set its attributes
 
-var audioElement = document.createElement('audio');
-  audioElement.setAttribute('src', reading_order[0].url);
-  audioElement.setAttribute('controls', '');
-  audioElement.setAttribute('id', 'audio-child');
-  audioElement.setAttribute('preload', '');
-  audioElement.setAttribute('title', reading_order[0].name);
-  playlistElement.appendChild(audioElement);
-  
-// add a span to hold the name of the audiofile  
-  var trackNameWrapper = document.createElement('span');
+var bookTitleElement= document.getElementById('booktitleelement');
+bookTitleElement.innerHTML = bookTitle;
+var trackNameWrapper= document.getElementById('tracknamewrapper');
+
+
   trackNameWrapper.innerHTML = reading_order[0].name;
-  playlistElement.appendChild(trackNameWrapper);
+  
+//  publisherDiv.innerHTML = 'Published by ' + publisher;
+  
+//    authorDiv.innerHTML = 'Written by ' + author;
+    
+  //    readByDiv.innerHTML = 'Read by ' + readBy;
+  
+  
+
+var audioElement= document.getElementById('audio-child');
+
+audioElement.setAttribute('src', reading_order[0].url)
+
 
 // add event listener for when playback ends, which starts playing the next audio file
-  audioElement.addEventListener('ended', function(){ 
+  audioElement.addEventListener('ended', function(){
+  console.log('ended') ;
   var currentAudioPosition = reading_order.findIndex(i => i.url === audioElement.getAttribute('src'));
+  
+  console.log(currentAudioPosition);
   audioElement.setAttribute('src', reading_order[currentAudioPosition + 1].url);
-  audioElement.setAttribute('title', reading_order[currentAudioPosition + 1].name);
+//  audioElement.setAttribute('title', reading_order[currentAudioPosition + 1].name);
   trackNameWrapper.innerHTML = reading_order[currentAudioPosition + 1].name;
-  audioElement.play(); 
-  },false);
-}
-)
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.addedNodes.length)
-          console.info('Node added: ', mutation.addedNodes[0])
-      })
-    })
-    observer.observe(this, { childList: true })
-  }
-  };
+  
+// https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
+  var playPromise = audioElement.load();
 
-customElements.define('play-list', PlayListElement);
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      // Automatic playback started!
+      // Show playing UI.
+      
+      console.log('played');
+        console.log(audioElement.getAttribute('src'));
+
+    })
+    .catch(error => {
+      // Auto-play was prevented
+      // Show paused UI.
+      console.log('error');
+              console.log(audioElement.getAttribute('src'));
+
+    });
+  }
+
+
+  
+  
+  },false);
+  
+  // tabs for toc/metadata
+  
+// <div class="tabs">
+// <input type="radio" name="tabs" id="tabone" checked="checked">
+// <label for="tabone">Contents</label>
+// <div class="tab" id="contents">
+// </div>
+// <input type="radio" name="tabs" id="tabtwo" checked="checked">
+// <label for="tabtwo">Metadata</label>
+// <div class="tab" id="metadata">
+// 
+// <dl>
+// <dt>Author</dt><dd id="author"></dd>
+// <dt>Publisher</dt><dd id="publisher"></dd>
+// <dt>Read by</dt><dd id="readBy"></dd>
+// 
+// </dl>
+// </div>
+  
+  
+  
+  var tocDiv = document.getElementById('tocdiv');
+  
+  try {
+
+var tocLocation = manifestContent.resources[1].url;
+
+ fetch(tocLocation).then(response => response.text())
+ 
+ .then(result => { 
+    tocDiv.innerHTML = result;
+ });
+
+}
+catch (f) {
+tocDiv.innerHTML = 'no TOC';
+}
+  
+
+ 
+ // shit. gonna need to redirect the links. 
+ 
+ // TK
+  
+
+  
+    
+
+  
+} // end of then 
+)
+}
+
+
 </script>
 </body>
 </html>

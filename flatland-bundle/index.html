@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<link rel="manifest" href="publication.json">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#4285f4">
+	<style type="text/css">
+	h1 { 
+	  font-size: 1.5em;
+	  font-weight: normal;
+	  text-transform: lowercase;
+	  font-variant: small-caps;
+	  letter-spacing: 2pt;
+	  width: 500px;
+	  margin-left: 1rem;
+	  }
+	audio { 
+	display: block;
+	margin-left: 1rem;
+	 }
+
+	.play-list {
+	text-align: left;
+	display: block;
+	}
+	
+	.play-list > span {
+	display: block;
+margin-left: 1rem;
+	margin-bottom: 10px;
+	}
+	
+	
+		/**
+ * Tabs
+ */
+ 
+ label {
+	  font-size: 1.2em;
+	  font-weight: normal;
+	  text-transform: lowercase;
+	  font-variant: small-caps;
+	  letter-spacing: 2pt;
+ }
+.tabs {
+	display: flex;
+	flex-wrap: wrap; // make sure it wraps
+}
+.tabs label {
+	order: 1; // Put the labels first
+	display: block;
+	padding: 1rem 1rem;
+	margin-right: 0.2rem;
+	cursor: pointer;
+  background: #90CAF9;
+  transition: background ease 0.2s;
+}
+.tabs .tab {
+  order: 99; // Put the tabs last
+  flex-grow: 1;
+	width: 100%;
+	display: none;
+  padding: 1rem;
+  background: #fff;
+}
+.tabs input[type="radio"] {
+	display: none;
+}
+.tabs input[type="radio"]:checked + label {
+	background: #fff;
+}
+.tabs input[type="radio"]:checked + label + .tab {
+	display: block;
+}
+
+@media (max-width: 45em) {
+  .tabs .tab,
+  .tabs label {
+    order: initial;
+  }
+  .tabs label {
+    width: 100%;
+    margin-right: 0;
+    margin-top: 0.2rem;
+  }
+}
+
+
+body {
+  background: #eee;
+  min-height: 100vh;
+	box-sizing: border-box;
+	padding-top: 10vh;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
+  line-height: 1.5;
+  max-width: 60rem;
+  margin: 0 auto;
+  font-size: 112%;
+}
+
+div > p {
+text-align: left;
+}
+
+nav ol, nav li {
+text-align: left;
+list-style-type: none;
+margin-left: 0;
+padding-left: 0;
+}
+
+
+	</style>
+	
+		
+ <script type="application/json" id="manifest">
+	
+	{
+  "@context": ["https://schema.org", "https://www.w3.org/ns/pub-context"],
+  "type": "Audiobook",
+  "id": "https://librivox.org/flatland-a-romance-of-many-dimensions-by-edwin-abbott-abbott/",
+  "url": "https://w3c.github.io/wpub/experiments/audiobook/",
+  "name": "Flatland: A Romance of Many Dimensions",
+  "short_name": "Flatland",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "icons-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  
+  "theme_color": "#3367D6",
+  "background_color": "#3367D6",
+
+  "author": "Edwin Abbott Abbott",
+  "readBy": "Ruth Golding",
+  "publisher": "Librivox",
+  "inLanguage": ["en"],
+  "dateModified": "2019-09-18T19:32:18Z",
+  "datePublished": "2008-10-12",
+  "duration": "PT15153S",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+
+  "resources": [
+    {
+      "rel": "cover",
+      "url": "icons-512.png",
+      "encodingFormat": "image/png"
+    },{
+      "rel": "contents", 
+      "url": "toc.html", 
+      "encodingFormat": "text/html"
+    }
+  ],
+
+  "readingOrder": [
+    {
+      "url": "flatland_1_abbott_64kb.mp3",
+      "encodingFormat": "audio/mpeg",
+      "length": 1371,
+      "name": "Part 1, Sections 1 - 3"
+    },{
+      "url": "flatland_2_abbott_64kb.mp3",
+      "encodingFormat": "audio/mpeg", 
+      "length": 1669,
+      "name": "Part 1, Sections 4 - 5"
+    },{
+      "url": "flatland_3_abbott_64kb.mp3",
+      "encodingFormat": "audio/mpeg",
+      "length": 1506,
+      "name": "Part 1, Sections 6 - 7"
+    },{
+      "url": "flatland_4_abbott_64kb.mp3",
+      "encodingFormat": "audio/mpeg",
+      "length": 1669,
+      "name": "Part 1, Sections 8 - 10"
+    },{
+      "url": "flatland_5_abbott_64kb.mp3",
+      "encodingFormat": "audio/mpeg",
+      "length": 1506,
+      "name": "Part 1, Sections 11 - 12"
+    }
+  ]
+}
+	
+	</script>
+	
+	
+</head>
+<body>
+
+
+
+
+<div class="play-list" id="foo">
+
+
+<audio id="audio-child" controls="" preload=""></audio>
+<h1 id=booktitleelement></h1>
+<span id=tracknamewrapper></span>
+
+<div class=tabs>
+<input id=tabone type=radio name=tabs checked=checked>
+<label for=tabone>Contents</label>
+<div id=tocdiv class=tab>
+<nav role="doc-toc">
+<ol>
+	<li><a href="flatland_1_abbott_64kb.mp3">Part 1, Sections 1 - 3</a></li>
+    <li><a href="flatland_2_abbott_64kb.mp3">Part 1, Sections 4 - 5</a></li>
+    <li><a href="flatland_3_abbott_64kb.mp3">Part 1, Sections 6 - 7</a></li>
+    <li><a href="flatland_4_abbott_64kb.mp3">Part 1, Sections 8 - 10</a></li>
+    <li><a href="flatland_5_abbott_64kb.mp3">Part 1, Sections 11 - 12</a></li>
+</ol>
+</nav>
+
+</div>
+<input id=tabtwo type=radio name=tabs checked=checked>
+<label for=tabtwo>Metadata</label>
+<div class=tab>
+<p><b>Author: </b><span id="author"></span></p>
+<p><b>Read by: </b><span id="readby"></span></p>
+<p><b>Publisher: </b><span id="publisher"></span></p>
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+
+var manifestData = JSON.parse(document.getElementById('manifest').innerHTML);
+
+
+// get the reading order from the manifest
+var reading_order = manifestData.readingOrder;
+var bookTitle = manifestData.name;
+var author = manifestData.author;
+console.log(author);
+var readBy = manifestData.readBy;
+var publisher = manifestData.publisher;
+
+
+document.getElementById('author').innerHTML = author;
+document.getElementById('readby').innerHTML = readBy;
+document.getElementById('publisher').innerHTML = publisher;
+var bookTitleElement= document.getElementById('booktitleelement');
+bookTitleElement.innerHTML = bookTitle;
+var trackNameWrapper= document.getElementById('tracknamewrapper');
+trackNameWrapper.innerHTML = reading_order[0].name;
+  
+var audioElement= document.getElementById('audio-child');
+
+audioElement.setAttribute('src', reading_order[0].url)
+
+
+// add event listener for when playback ends, which starts playing the next audio file
+  audioElement.addEventListener('ended', function(){
+  console.log('ended') ;
+  var currentAudioPosition = reading_order.findIndex(i => i.url === audioElement.getAttribute('src'));
+  
+  console.log(currentAudioPosition);
+  audioElement.setAttribute('src', reading_order[currentAudioPosition + 1].url);
+//  audioElement.setAttribute('title', reading_order[currentAudioPosition + 1].name);
+  trackNameWrapper.innerHTML = reading_order[currentAudioPosition + 1].name;
+  
+// https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
+  var playPromise = audioElement.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      // Automatic playback started!
+      // Show playing UI.
+      
+      console.log('played');
+        console.log(audioElement.getAttribute('src'));
+
+    })
+    .catch(error => {
+      // Auto-play was prevented
+      // Show paused UI.
+      console.log('error');
+              console.log(audioElement.getAttribute('src'));
+
+    });
+  }
+
+
+  
+  
+  },false);
+  
+ 
+
+
+function interceptClickEvent(e) {
+    var href;
+    var target = e.target || e.srcElement;
+    if (target.tagName === 'A') {
+        href = target.getAttribute('href');
+
+        //put your logic here...
+        if (true) {
+
+
+  var currentAudioPosition = reading_order.findIndex(i => i.url === href);
+  console.log(currentAudioPosition);
+  
+   audioElement.setAttribute('src', reading_order[currentAudioPosition].url);
+  trackNameWrapper.innerHTML = reading_order[currentAudioPosition].name;
+           //tell the browser not to respond to the link click
+           
+             var playPromise = audioElement.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      // Automatic playback started!
+      // Show playing UI.
+      
+      console.log('played');
+        console.log(audioElement.getAttribute('src'));
+
+    })
+    .catch(error => {
+      // Auto-play was prevented
+      // Show paused UI.
+      console.log('error');
+              console.log(audioElement.getAttribute('src'));
+
+    });
+  }
+           e.preventDefault();
+        }
+    }
+}
+
+
+//listen for link click events at the document level
+if (document.addEventListener) {
+    document.addEventListener('click', interceptClickEvent);
+} else if (document.attachEvent) {
+    document.attachEvent('onclick', interceptClickEvent);
+}
+
+
+
+</script>
+</body>
+</html>
